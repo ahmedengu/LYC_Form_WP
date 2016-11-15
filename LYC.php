@@ -277,7 +277,7 @@ function sendMail( $atts, $content, $code, $to, $name ) {
 	$content = str_replace( '[CODE]', $code, $content );
 	$content = str_replace( '[NAME]', sanitize_text_field( $name ), $content );
 	$from    = ( isset( $atts['from'] ) ) ? $atts['from'] : 'lyc@ieeeaast.org';
-	$headers = "From: LYC <$from>" . "\r\n";
+	$headers = array( "From: LYC <$from>", "Content-Type: text/html; charset=UTF-8" );
 	$wp_mail = wp_mail( sanitize_email( $to ), $atts['title'], $content, $headers );
 
 	if ( isset( $atts['show_mail'] ) ) {
