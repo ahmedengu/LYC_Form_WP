@@ -2,9 +2,12 @@
 
 /*
 Plugin Name: LYC
-Author: ahmedengu
+Plugin URI: http://github.com/ahmedengu/LYC_Form_WP
+Description: Use tag [LYC_FORM], available attributes title, show_mail | Between the tags you can put the message with replaceable keywords [CODE], [NAME]  | Example:  [LYC_FORM   title="Email Subject" show_mail="1"]  Dear [NAME],   Your code: [CODE]  [/LYC_FORM]
+Version: 1.0
+Author: Ahmedengu
+Author URI: http://github.com/ahmedengu
 */
-
 
 function html_form_code() {
 	echo '<form action="' . esc_url( $_SERVER['REQUEST_URI'] ) . '" method="post">';
@@ -155,7 +158,7 @@ function generateCode( $wpdb ) {
 function codeRand( $wpdb, $pre ) {
 	$num = $wpdb->get_var( "SELECT COUNT(*) FROM `lyc_form` WHERE `code` LIKE '$pre%'" );
 	if ( $num < 999 ) {
-		return "$pre" . sprintf('%03d',( $num + 1 ));
+		return "$pre" . sprintf( '%03d', ( $num + 1 ) );
 	} else {
 		return false;
 	}
@@ -273,7 +276,9 @@ function checkRequired() {
 function sendMail( $atts, $content, $code, $to, $name ) {
 	$content = str_replace( '[CODE]', $code, $content );
 	$content = str_replace( '[NAME]', sanitize_text_field( $name ), $content );
-	echo $content;
+	if ( isset( $atts['show_mail'] ) ) {
+		echo $content;
+	}
 	$headers = "From: LYC <lyc@ieeeaast.org>" . "\r\n";
 	$wp_mail = wp_mail( sanitize_email( $to ), $atts['title'], $content, $headers );
 
@@ -283,9 +288,9 @@ function sendMail( $atts, $content, $code, $to, $name ) {
 
 function LYC_shortcode( $atts = [], $content = null, $tag = '' ) {
 	ob_start();
-	process( $atts, $content );
-//	if ( $deliver_mail )
-	html_form_code();
+	if ( process( $atts, $content ) ) {
+		html_form_code();
+	}
 
 	return ob_get_clean();
 }
