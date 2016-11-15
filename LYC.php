@@ -3,7 +3,7 @@
 /*
 Plugin Name: LYC
 Plugin URI: http://github.com/ahmedengu/LYC_Form_WP
-Description: Use tag [LYC_FORM], available attributes title, show_mail | Between the tags you can put the message with replaceable keywords [CODE], [NAME]  | Example:  [LYC_FORM   title="Email Subject" show_mail="1"]  Dear [NAME],   Your code: [CODE]  [/LYC_FORM]
+Description: Use tag [LYC_FORM], available attributes title, show_mail, from | Between the tags you can put the message with replaceable keywords [CODE], [NAME]  | Example:  [LYC_FORM   title="Email Subject" show_mail="1" from="my@mail.com"]  Dear [NAME],   Your code: [CODE]  [/LYC_FORM]
 Version: 1.0
 Author: Ahmedengu
 Author URI: http://github.com/ahmedengu
@@ -276,11 +276,13 @@ function checkRequired() {
 function sendMail( $atts, $content, $code, $to, $name ) {
 	$content = str_replace( '[CODE]', $code, $content );
 	$content = str_replace( '[NAME]', sanitize_text_field( $name ), $content );
-	if ( isset( $atts['show_mail'] ) ) {
-		echo $content;
-	}
-	$headers = "From: LYC <lyc@ieeeaast.org>" . "\r\n";
+	$from    = ( isset( $atts['from'] ) ) ? $atts['from'] : 'lyc@ieeeaast.org';
+	$headers = "From: LYC <$from>" . "\r\n";
 	$wp_mail = wp_mail( sanitize_email( $to ), $atts['title'], $content, $headers );
+
+	if ( isset( $atts['show_mail'] ) ) {
+		echo $content . '<br>From: ' . $from . '<br>';
+	}
 
 	return $wp_mail;
 }
