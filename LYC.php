@@ -3,7 +3,7 @@
 /*
 Plugin Name: LYC
 Plugin URI: http://github.com/ahmedengu/LYC_Form_WP
-Description: Use tag [LYC_FORM], available attributes title, show_mail, from | Between the tags you can put the message with replaceable keywords [CODE], [NAME]  | Example:  [LYC_FORM   title="Email Subject" show_mail="1" from="my@mail.com"]  Dear [NAME],   Your code: [CODE]  [/LYC_FORM]
+Description: Use tag [LYC_FORM], available attributes title, show_mail, from , redirect | Between the tags you can put the message with replaceable keywords [CODE], [NAME]  | Example:  [LYC_FORM   title="Email Subject" show_mail="1" from="my@mail.com"]  Dear [NAME],   Your code: [CODE]  [/LYC_FORM]
 Version: 1.0
 Author: Ahmedengu
 Author URI: http://github.com/ahmedengu
@@ -120,7 +120,6 @@ function process( $atts, $content ) {
 		}
 
 		if ( sendMail( $atts, $content, $code, $_POST['l_email'], $_POST['l_name'] ) ) {
-
 			echo '<div>';
 			echo '<p>Registered</p>';
 			echo '</div>';
