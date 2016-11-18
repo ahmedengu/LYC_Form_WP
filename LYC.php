@@ -166,10 +166,32 @@ function codeRand( $wpdb, $pre ) {
 
 function validate() {
 	$errors = checkRequired();
+	$errors = checkRegex( $errors );
 	$errors = checkEmail( $errors );
 	$errors = checkMobile( $errors );
 	$errors = checkRadio( $errors );
 	$errors = checkBirthday( $errors );
+
+	return $errors;
+}
+
+/**
+ * @param $errors
+ *
+ * @return string
+ */
+function checkRegex( $errors ) {
+	if ( strlen( $errors ) == 0 ) {
+		$regex = array(
+			array( "name", "/([a-zA-Z]* ){2}([a-zA-Z]* ?)*/", "Name should be english and at least 3 words" ),
+			array( "cert", "/([a-zA-Z]* ){2}([a-zA-Z]* ?)*/", "Certificate should be english and at least 3 words" )
+		);
+		for ( $i = 0; $i < count( $regex ); $i ++ ) {
+			if ( ! ( preg_match( $regex[ $i ][1], $_POST[ 'l_' . $regex[ $i ][0] ] ) ) ) {
+				$errors .= $regex[ $i ][2] . ' <br>';
+			}
+		}
+	}
 
 	return $errors;
 }
