@@ -120,9 +120,13 @@ function process( $atts, $content ) {
 		}
 
 		if ( sendMail( $atts, $content, $code, $_POST['l_email'], $_POST['l_name'] ) ) {
+
 			echo '<div>';
 			echo '<p>Registered</p>';
 			echo '</div>';
+			if ( isset( $atts['redirect'] ) ) {
+				echo "<script>window.location.href=\"" . $atts['redirect'] . "\";</script>";
+			}
 
 			return false;
 		} else {
@@ -304,6 +308,9 @@ function sendMail( $atts, $content, $code, $to, $name ) {
 
 	if ( isset( $atts['show_mail'] ) ) {
 		echo $content . '<br>From: ' . $from . '<br>';
+		if ( isset( $atts['redirect'] ) ) {
+			echo "<script>window.location.href=\"" . $atts['redirect'] . "\";</script>";
+		}
 	}
 
 	return $wp_mail;
