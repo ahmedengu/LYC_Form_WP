@@ -344,25 +344,29 @@ register_activation_hook( __FILE__, 'LYC_INSTALL' );
 
 add_action( 'admin_menu', 'l_add_admin_menu' );
 
-
 function l_add_admin_menu() {
-	add_menu_page( 'LYC', 'LYC: list', 'manage_options', 'lyc_list', 'l_options_page' );
+	add_menu_page( 'LYC:list', 'LYC:list', 'manage_options', 'lyc_list', 'l_options_List' );
+	add_submenu_page( 'lyc_list', 'LYC', 'Empty it', 'manage_options', 'lyc_empty', 'y_options_Empty' );
 }
 
-
-function l_options_page() {
+function l_options_List() {
 	global $wpdb;
 
-	$num = $wpdb->get_results( "SELECT * FROM `lyc_form`" );
+	$results = $wpdb->get_results( "SELECT * FROM `lyc_form`" );
+	if ( count( $results ) == 0 ) {
+		echo "<br><h1>Table is empty</h1>";
+
+		return;
+	}
 	echo "<br><div style='overflow: scroll'><table class=\"widefat fixed\">";
 	echo "<thead><tr>";
-	foreach ( $num[0] as $key => $value ) {
+	foreach ( $results[0] as $key => $value ) {
 		echo "<th class=\"manage-column column-columnname\">";
 		echo "$key";
 		echo "</th>";
 	}
 	echo "</tr></thead>";
-	foreach ( $num as $fivesdraft ) {
+	foreach ( $results as $fivesdraft ) {
 		echo "<tr class=\"alternate\">";
 		foreach ( $fivesdraft as $key => $value ) {
 			echo "<td class=\"column-columnname\">";
@@ -374,5 +378,23 @@ function l_options_page() {
 	echo "</table></div>";
 
 }
+
+function y_options_Empty() {
+	if ( isset( $_POST["l_emptyit"] ) ) {
+		global $wpdb;
+		$q = $wpdb->query( "TRUNCATE TABLE `lyc_form`" );
+		if ( $q ) {
+			echo "<br><h1>Table is empty now</h1>";
+		} else {
+			echo "<br><h1>" . $q . "</h1>";
+		}
+	} else {
+		echo "<br> <br><form  method='post'>";
+		echo "<button class=\"button action\" type='submit' name='l_emptyit' value='l_emptyit'>Empty It</button>";
+		echo "</form>";
+	}
+
+}
+
 
 
