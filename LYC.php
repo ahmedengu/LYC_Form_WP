@@ -341,3 +341,38 @@ function LYC_INSTALL() {
 
 
 register_activation_hook( __FILE__, 'LYC_INSTALL' );
+
+add_action( 'admin_menu', 'l_add_admin_menu' );
+
+
+function l_add_admin_menu() {
+	add_menu_page( 'LYC', 'LYC: list', 'manage_options', 'lyc_list', 'l_options_page' );
+}
+
+
+function l_options_page() {
+	global $wpdb;
+
+	$num = $wpdb->get_results( "SELECT * FROM `lyc_form`" );
+	echo "<br><div style='overflow: scroll'><table class=\"widefat fixed\">";
+	echo "<thead><tr>";
+	foreach ( $num[0] as $key => $value ) {
+		echo "<th class=\"manage-column column-columnname\">";
+		echo "$key";
+		echo "</th>";
+	}
+	echo "</tr></thead>";
+	foreach ( $num as $fivesdraft ) {
+		echo "<tr class=\"alternate\">";
+		foreach ( $fivesdraft as $key => $value ) {
+			echo "<td class=\"column-columnname\">";
+			echo "$value";
+			echo "</td>";
+		}
+		echo "</tr>";
+	}
+	echo "</table></div>";
+
+}
+
+
