@@ -121,7 +121,7 @@ function process( $atts, $content ) {
 
 		if ( sendMail( $atts, $content, $code, $_POST['l_email'], $_POST['l_name'] ) ) {
 			echo '<div>';
-			echo '<p>Registered</p>';
+			echo '<p>Thank you for registering for LYC!</p>';
 			echo '</div>';
 			if ( isset( $atts['redirect'] ) ) {
 				echo "<script>window.location.href=\"" . $atts['redirect'] . "\";</script>";
