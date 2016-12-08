@@ -79,7 +79,7 @@ function html_form_code() {
 	echo '<input type="radio" name="l_member" value="Non Member" ' . ( ( isset( $_POST['l_member'] ) && $_POST['l_member'] == 'Non Member' ) ? 'checked' : '' ) . ' />Non Member<br>';
 	echo '</p>';
 
-	echo '<p><input type="submit" name="l_submitted" value="Send"/></p>';
+	echo '<p><input type="submit" name="l_submitted" value="Send" class="fusion-button button-xlarge"/></p>';
 	echo '</form>';
 }
 
