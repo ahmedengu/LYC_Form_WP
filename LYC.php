@@ -40,12 +40,12 @@ function html_form_code() {
 	echo '</p>';
 
 	echo '<p>';
-	echo 'University *<br />';
+	echo 'University/School *<br />';
 	echo '<input type="text" name="l_university"  value="' . ( isset( $_POST["l_university"] ) ? esc_attr( $_POST["l_university"] ) : '' ) . '" required/>';
 	echo '</p>';
 
 	echo '<p>';
-	echo 'College *<br />';
+	echo 'College <br />';
 	echo '<input type="text" name="l_college"  value="' . ( isset( $_POST["l_college"] ) ? esc_attr( $_POST["l_college"] ) : '' ) . '" required/>';
 	echo '</p>';
 
@@ -79,6 +79,11 @@ function html_form_code() {
 	echo '<input type="radio" name="l_member" value="Non Member" ' . ( ( isset( $_POST['l_member'] ) && $_POST['l_member'] == 'Non Member' ) ? 'checked' : '' ) . ' />Non Member<br>';
 	echo '</p>';
 
+	echo '<p>';
+	echo 'Membership number<br />';
+	echo '<input type="text" name="l_member_Num"  value="' . ( isset( $_POST["l_member_Num"] ) ? esc_attr( $_POST["l_member_Num"] ) : '' ) . '" />';
+	echo '</p>';
+
 	echo '<p><input type="submit" name="l_submitted" value="Send" class="fusion-button button-xlarge"/></p>';
 	echo '</form>';
 }
@@ -110,7 +115,7 @@ function process( $atts, $content ) {
 			'email'      => $_POST['l_email'],
 			'mobile'     => $_POST['l_mobile'],
 			'academic'   => $_POST['l_academic'] . ( isset( $_POST['l_academic_other'] ) ? ': ' . $_POST['l_academic_other'] : '' ),
-			'member'     => $_POST['l_member'],
+			'member'     => $_POST['l_member'] . ( ( isset( $_POST['l_member_Num'] ) && $_POST['l_member'] == 'Member' ) ? ': ' . $_POST['l_member_Num'] : '' ),
 			'code'       => $code
 		) );
 		if ( $insert == false ) {
@@ -279,7 +284,6 @@ function checkRequired() {
 		'dd',
 		'yyyy',
 		'university',
-		'college',
 		'email',
 		'mobile',
 		'academic',
