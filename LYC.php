@@ -34,8 +34,8 @@ function html_form_code() {
 
 	echo '<p>';
 	echo 'Birthday *<br />';
-	echo '<span style="display: flex"><input type="number" name="l_mm" placeholder="MM" max="13" min="0" value="' . ( isset( $_POST["l_mm"] ) ? esc_attr( $_POST["l_mm"] ) : '' ) . '" required/>';
-	echo '/ <input type="number" name="l_dd" placeholder="DD" max="32" min="0" value="' . ( isset( $_POST["l_dd"] ) ? esc_attr( $_POST["l_dd"] ) : '' ) . '" required/>';
+	echo '<span style="display: flex"><input type="number" name="l_mm" placeholder="MM" max="12" min="1" value="' . ( isset( $_POST["l_mm"] ) ? esc_attr( $_POST["l_mm"] ) : '' ) . '" required/>';
+	echo '/ <input type="number" name="l_dd" placeholder="DD" max="31" min="1" value="' . ( isset( $_POST["l_dd"] ) ? esc_attr( $_POST["l_dd"] ) : '' ) . '" required/>';
 	echo '/ <input type="number" name="l_yyyy" placeholder="YYYY" max="2016" min="1900" value="' . ( isset( $_POST["l_yyyy"] ) ? esc_attr( $_POST["l_yyyy"] ) : '' ) . '" required/></span>';
 	echo '</p>';
 
@@ -46,7 +46,7 @@ function html_form_code() {
 
 	echo '<p>';
 	echo 'College <br />';
-	echo '<input type="text" name="l_college"  value="' . ( isset( $_POST["l_college"] ) ? esc_attr( $_POST["l_college"] ) : '' ) . '" required/>';
+	echo '<input type="text" name="l_college"  value="' . ( isset( $_POST["l_college"] ) ? esc_attr( $_POST["l_college"] ) : '' ) . '" />';
 	echo '</p>';
 
 	echo '<p>';
@@ -114,7 +114,7 @@ function process( $atts, $content ) {
 			'department' => $_POST['l_department'],
 			'email'      => $_POST['l_email'],
 			'mobile'     => $_POST['l_mobile'],
-			'academic'   => $_POST['l_academic'] . ( isset( $_POST['l_academic_other'] ) ? ': ' . $_POST['l_academic_other'] : '' ),
+			'academic'   => $_POST['l_academic'] . ( ( isset( $_POST['l_academic_other'] ) && $_POST['l_academic'] == 'Other' ) ? ': ' . $_POST['l_academic_other'] : '' ),
 			'member'     => $_POST['l_member'] . ( ( isset( $_POST['l_member_Num'] ) && $_POST['l_member'] == 'Member' ) ? ': ' . $_POST['l_member_Num'] : '' ),
 			'code'       => $code
 		) );
@@ -210,7 +210,7 @@ function checkRegex( $errors ) {
  * @return string
  */
 function checkBirthday( $errors ) {
-	if ( strlen( $errors ) == 0 && ! preg_match( "/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/", $_POST['l_yyyy'] . '-' . $_POST['l_mm'] . '-' . $_POST['l_dd'] ) ) {
+	if ( strlen( $errors ) == 0 && ! preg_match( "/^[0-9]{4}-([1-9]|1[0-2])-([1-9]|[1-2][0-9]|3[0-1])$/", $_POST['l_yyyy'] . '-' . $_POST['l_mm'] . '-' . $_POST['l_dd'] ) ) {
 		$errors = 'Birthday not valid <br>';
 	}
 
@@ -238,6 +238,10 @@ function checkRadio( $errors ) {
 		}
 		if ( $_POST['l_member'] != 'Member' && $_POST['l_member'] != 'Non Member' ) {
 			$errors .= 'member values is Member or Non Member<br>';
+		}
+
+		if ( $_POST['l_member'] == 'Member' && ( ! isset( $_POST["l_member_Num"] ) || strlen( $_POST["l_member_Num"] ) < 2 ) ) {
+			$errors .= 'Member number is required<br>';
 		}
 	}
 
@@ -291,7 +295,7 @@ function checkRequired() {
 	];
 	$errors   = "";
 	for ( $i = 0; $i < count( $required ); $i ++ ) {
-		if ( ! isset( $_POST[ 'l_' . $required[ $i ] ] ) || strlen( $_POST[ 'l_' . $required[ $i ] ] ) < 2 ) {
+		if ( ! isset( $_POST[ 'l_' . $required[ $i ] ] ) || strlen( $_POST[ 'l_' . $required[ $i ] ] ) < 1 ) {
 			$errors .= $required[ $i ] . ' is required <br>';
 		}
 	}
