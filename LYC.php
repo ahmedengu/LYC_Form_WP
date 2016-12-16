@@ -242,6 +242,8 @@ function checkRadio( $errors ) {
 
 		if ( $_POST['l_member'] == 'Member' && ( ! isset( $_POST["l_member_Num"] ) || strlen( $_POST["l_member_Num"] ) < 2 ) ) {
 			$errors .= 'Member number is required<br>';
+		} elseif ( $_POST['l_member'] == 'Member' && ( isset( $_POST["l_member_Num"] ) && ! is_numeric( $_POST["l_member_Num"] ) ) ) {
+			$errors .= 'Member number should be a number<br>';
 		}
 	}
 
