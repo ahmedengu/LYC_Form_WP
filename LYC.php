@@ -313,10 +313,12 @@ function sendMail( $atts, $content, $code, $to, $name ) {
 	$content = str_replace( '[NAME]', sanitize_text_field( $name ), $content );
 	$from    = ( isset( $atts['from'] ) ) ? $atts['from'] : 'lyc@ieeeaast.org';
 	$headers = array( "From: LYC <$from>", "Content-Type: text/html; charset=UTF-8" );
-	$wp_mail = wp_mail( sanitize_email( $to ), $atts['title'], $content, $headers );
+	$title   = str_replace( '[CODE]', $code, $atts['title'] );
+	$title   = str_replace( '[NAME]', sanitize_text_field( $name ), $title );
+	$wp_mail = wp_mail( sanitize_email( $to ), $title, $content, $headers );
 
 	if ( isset( $atts['show_mail'] ) ) {
-		echo $content . '<br>From: ' . $from . '<br>' . '<br>To: ' . $to . '<br>';
+		echo $content . '<br>From: ' . $from . '<br>' . '<br>To: ' . $to . '<br>' . '<br>Title: ' . $title . '<br>';
 		if ( isset( $atts['redirect'] ) ) {
 			echo "<script>window.location.href=\"" . $atts['redirect'] . "\";</script>";
 		}
@@ -430,8 +432,13 @@ function y_options_Send_Mail() {
 
 		if ( isset( $_POST["l_emailmessage"] ) && strlen( $_POST["l_emailmessage"] ) ) {
 			global $wpdb;
-			$results = $wpdb->get_results( "SELECT * FROM `lyc_form`" );
+			if ( isset( $_POST['l_onlypaid'] ) && $_POST['l_onlypaid'] == '1' ) {
+				$results = $wpdb->get_results( "SELECT * FROM `lyc_form` WHERE isPaid = 1" );
+			} else {
+				$results = $wpdb->get_results( "SELECT * FROM `lyc_form`" );
+			}
 			if ( $results ) {
+				echo '<br><br>';
 				foreach ( $results as $result ) {
 					echo "sending to $result->email ... ";
 					$atts = array(
@@ -445,6 +452,7 @@ function y_options_Send_Mail() {
 					}
 					sleep( 3 );
 				}
+				echo "<br><h1>Done!</h1>";
 			} else {
 				echo "<br><h1>Table is empty!</h1>";
 			}
@@ -456,8 +464,10 @@ function y_options_Send_Mail() {
 			echo "From: <input type='text' name='l_emailfrom' placeholder='From' value='lyc@ieeeaast.org'/> <br>";
 			echo "Title: <input type='text' name='l_emailtitle' placeholder='Title'/> <br>";
 			echo "Message:<br><textarea rows='4' cols='50' name='l_emailmessage'></textarea> <br>";
+			echo "<input type='checkbox' name='l_onlypaid' value='1'/> Send to paid only  <br>";
 			echo "<button class=\"button action\" type='submit'>Send</button>";
 			echo "</form>";
+			echo '<br> Notice that gonna take a long time!';
 		}
 	} else {
 		echo "<br><h1>Only admin is allowed here!</h1>";
