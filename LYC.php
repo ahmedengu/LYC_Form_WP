@@ -314,7 +314,7 @@ function sendMail( $atts, $content, $code, $to, $name ) {
 	$wp_mail = wp_mail( sanitize_email( $to ), $atts['title'], $content, $headers );
 
 	if ( isset( $atts['show_mail'] ) ) {
-		echo $content . '<br>From: ' . $from . '<br>';
+		echo $content . '<br>From: ' . $from . '<br>' . '<br>To: ' . $to . '<br>';
 		if ( isset( $atts['redirect'] ) ) {
 			echo "<script>window.location.href=\"" . $atts['redirect'] . "\";</script>";
 		}
@@ -492,6 +492,7 @@ function y_options_Pay() {
 				echo "<p>Code  : $row->code<p>";
 				echo "<p>mobile  : $row->mobile<p>";
 				echo "<p>Is Paid  : " . ( ( $row->isPaid ) ? 'Yes' : 'No' ) . "<p>";
+				echo "<p>PaidTo  : $row->paidTo<p>";
 			}
 		} else {
 			echo "<br><h1>Not Found</h1>";
