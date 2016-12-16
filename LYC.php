@@ -341,7 +341,7 @@ function LYC_INSTALL() {
 
 	$charset_collate = $wpdb->get_charset_collate();
 
-	$sql = "CREATE TABLE `lyc_form` ( `name` TEXT NOT NULL , `cert` TEXT NOT NULL , `gender` TEXT NOT NULL , `birthday` TEXT NOT NULL , `university` TEXT NOT NULL , `college` TEXT NOT NULL , `department` TEXT NOT NULL , `email` TEXT NOT NULL , `mobile` TEXT NOT NULL , `academic` TEXT NOT NULL , `member` TEXT NOT NULL , `id` INT NOT NULL AUTO_INCREMENT , `code` VARCHAR(20) NOT NULL , PRIMARY KEY (`id`)) $charset_collate;";
+	$sql = "CREATE TABLE `lyc_form` ( `name` TEXT NOT NULL , `cert` TEXT NOT NULL , `gender` TEXT NOT NULL , `birthday` TEXT NOT NULL , `university` TEXT NOT NULL , `college` TEXT NOT NULL , `department` TEXT NOT NULL , `email` TEXT NOT NULL , `mobile` TEXT NOT NULL , `academic` TEXT NOT NULL , `member` TEXT NOT NULL , `id` INT NOT NULL AUTO_INCREMENT , `code` VARCHAR(20) NOT NULL,`isPaid` BOOLEAN NULL, `paidTo` TEXT NULL , PRIMARY KEY (`id`)) $charset_collate;";
 
 	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 	dbDelta( $sql );
@@ -353,64 +353,125 @@ register_activation_hook( __FILE__, 'LYC_INSTALL' );
 add_action( 'admin_menu', 'l_add_admin_menu' );
 
 function l_add_admin_menu() {
-	add_menu_page( 'LYC:list', 'LYC:list', 'manage_options', 'lyc_list', 'l_options_List' );
+	add_menu_page( 'LYC:list', 'LYC', 'manage_options', 'lyc_list', 'l_options_List' );
 	add_submenu_page( 'lyc_list', 'LYC', 'Empty it', 'manage_options', 'lyc_empty', 'y_options_Empty' );
+	add_submenu_page( 'lyc_list', 'LYC', 'Pay', 'read', 'lyc_pay', 'y_options_Pay' );
+
 }
 
 function l_options_List() {
-	global $wpdb;
+	if ( is_super_admin() ) {
+		global $wpdb;
 
-	$results = $wpdb->get_results( "SELECT * FROM `lyc_form`" );
-	if ( count( $results ) == 0 ) {
-		echo "<br><h1>Table is empty</h1>";
+		$results = $wpdb->get_results( "SELECT * FROM `lyc_form`" );
+		if ( count( $results ) == 0 ) {
+			echo "<br><h1>Table is empty</h1>";
 
-		return;
-	}
-	echo '<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"><script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script><script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script><script type="text/javascript" src="http://ngiriraj.com/pages/htmltable_export/tableExport.js"></script>
+			return;
+		}
+		echo '<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"><script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script><script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script><script type="text/javascript" src="http://ngiriraj.com/pages/htmltable_export/tableExport.js"></script>
 	<script type="text/javascript" src="http://ngiriraj.com/pages/htmltable_export/jquery.base64.js"></script>
 	<script type="text/javascript" src="http://ngiriraj.com/pages/htmltable_export/html2canvas.js"></script>
 	<script type="text/javascript" src="http://ngiriraj.com/pages/htmltable_export/jspdf/libs/sprintf.js"></script>
 	<script type="text/javascript" src="http://ngiriraj.com/pages/htmltable_export/jspdf/jspdf.js"></script>
 	<script type="text/javascript" src="http://ngiriraj.com/pages/htmltable_export/jspdf/libs/base64.js"></script>';
-	echo '<br><div><button class="btn btn-warning btn-sm dropdown-toggle" data-toggle="dropdown"><i class="fa fa-bars"></i> Export Table Data</button> <ul class="dropdown-menu " role="menu" style=" top: 0px; "> <li><a href="#" onClick ="$(\'#theTable\').tableExport({type:\'json\',escape:\'false\'});"> <img src=\'http://ngiriraj.com/pages/htmltable_export/icons/json.png\' width=\'24px\'> JSON</a></li> <li><a href="#" onClick ="$(\'#theTable\').tableExport({type:\'json\',escape:\'false\',ignoreColumn:\'[2,3]\'});"> <img src=\'http://ngiriraj.com/pages/htmltable_export/icons/json.png\' width=\'24px\'> JSON (ignoreColumn)</a></li> <li><a href="#" onClick ="$(\'#theTable\').tableExport({type:\'json\',escape:\'true\'});"> <img src=\'http://ngiriraj.com/pages/htmltable_export/icons/json.png\' width=\'24px\'> JSON (with Escape)</a></li> <li class="divider"></li> <li><a href="#" onClick ="$(\'#theTable\').tableExport({type:\'xml\',escape:\'false\'});"> <img src=\'http://ngiriraj.com/pages/htmltable_export/icons/xml.png\' width=\'24px\'> XML</a></li> <li><a href="#" onClick ="$(\'#theTable\').tableExport({type:\'sql\'});"> <img src=\'http://ngiriraj.com/pages/htmltable_export/icons/sql.png\' width=\'24px\'> SQL</a></li> <li class="divider"></li> <li><a href="#" onClick ="$(\'#theTable\').tableExport({type:\'csv\',escape:\'false\'});"> <img src=\'http://ngiriraj.com/pages/htmltable_export/icons/csv.png\' width=\'24px\'> CSV</a></li> <li><a href="#" onClick ="$(\'#theTable\').tableExport({type:\'txt\',escape:\'false\'});"> <img src=\'http://ngiriraj.com/pages/htmltable_export/icons/txt.png\' width=\'24px\'> TXT</a></li> <li class="divider"></li> <li><a href="#" onClick ="$(\'#theTable\').tableExport({type:\'excel\',escape:\'false\'});"> <img src=\'http://ngiriraj.com/pages/htmltable_export/icons/xls.png\' width=\'24px\'> XLS</a></li> <li><a href="#" onClick ="$(\'#theTable\').tableExport({type:\'doc\',escape:\'false\'});"> <img src=\'http://ngiriraj.com/pages/htmltable_export/icons/word.png\' width=\'24px\'> Word</a></li> <li><a href="#" onClick ="$(\'#theTable\').tableExport({type:\'powerpoint\',escape:\'false\'});"> <img src=\'http://ngiriraj.com/pages/htmltable_export/icons/ppt.png\' width=\'24px\'> PowerPoint</a></li> <li class="divider"></li> <li><a href="#" onClick ="$(\'#theTable\').tableExport({type:\'png\',escape:\'false\'});"> <img src=\'http://ngiriraj.com/pages/htmltable_export/icons/png.png\' width=\'24px\'> PNG</a></li> <li><a href="#" onClick ="$(\'#theTable\').tableExport({type:\'pdf\',pdfFontSize:\'7\',escape:\'false\'});"> <img src=\'http://ngiriraj.com/pages/htmltable_export/icons/pdf.png\' width=\'24px\'> PDF</a></li> </ul></div>';
+		echo '<br><div><button class="btn btn-warning btn-sm dropdown-toggle" data-toggle="dropdown"><i class="fa fa-bars"></i> Export Table Data</button> <ul class="dropdown-menu " role="menu" style=" top: 0px; "> <li><a href="#" onClick ="$(\'#theTable\').tableExport({type:\'json\',escape:\'false\'});"> <img src=\'http://ngiriraj.com/pages/htmltable_export/icons/json.png\' width=\'24px\'> JSON</a></li> <li><a href="#" onClick ="$(\'#theTable\').tableExport({type:\'json\',escape:\'false\',ignoreColumn:\'[2,3]\'});"> <img src=\'http://ngiriraj.com/pages/htmltable_export/icons/json.png\' width=\'24px\'> JSON (ignoreColumn)</a></li> <li><a href="#" onClick ="$(\'#theTable\').tableExport({type:\'json\',escape:\'true\'});"> <img src=\'http://ngiriraj.com/pages/htmltable_export/icons/json.png\' width=\'24px\'> JSON (with Escape)</a></li> <li class="divider"></li> <li><a href="#" onClick ="$(\'#theTable\').tableExport({type:\'xml\',escape:\'false\'});"> <img src=\'http://ngiriraj.com/pages/htmltable_export/icons/xml.png\' width=\'24px\'> XML</a></li> <li><a href="#" onClick ="$(\'#theTable\').tableExport({type:\'sql\'});"> <img src=\'http://ngiriraj.com/pages/htmltable_export/icons/sql.png\' width=\'24px\'> SQL</a></li> <li class="divider"></li> <li><a href="#" onClick ="$(\'#theTable\').tableExport({type:\'csv\',escape:\'false\'});"> <img src=\'http://ngiriraj.com/pages/htmltable_export/icons/csv.png\' width=\'24px\'> CSV</a></li> <li><a href="#" onClick ="$(\'#theTable\').tableExport({type:\'txt\',escape:\'false\'});"> <img src=\'http://ngiriraj.com/pages/htmltable_export/icons/txt.png\' width=\'24px\'> TXT</a></li> <li class="divider"></li> <li><a href="#" onClick ="$(\'#theTable\').tableExport({type:\'excel\',escape:\'false\'});"> <img src=\'http://ngiriraj.com/pages/htmltable_export/icons/xls.png\' width=\'24px\'> XLS</a></li> <li><a href="#" onClick ="$(\'#theTable\').tableExport({type:\'doc\',escape:\'false\'});"> <img src=\'http://ngiriraj.com/pages/htmltable_export/icons/word.png\' width=\'24px\'> Word</a></li> <li><a href="#" onClick ="$(\'#theTable\').tableExport({type:\'powerpoint\',escape:\'false\'});"> <img src=\'http://ngiriraj.com/pages/htmltable_export/icons/ppt.png\' width=\'24px\'> PowerPoint</a></li> <li class="divider"></li> <li><a href="#" onClick ="$(\'#theTable\').tableExport({type:\'png\',escape:\'false\'});"> <img src=\'http://ngiriraj.com/pages/htmltable_export/icons/png.png\' width=\'24px\'> PNG</a></li> <li><a href="#" onClick ="$(\'#theTable\').tableExport({type:\'pdf\',pdfFontSize:\'7\',escape:\'false\'});"> <img src=\'http://ngiriraj.com/pages/htmltable_export/icons/pdf.png\' width=\'24px\'> PDF</a></li> </ul></div>';
 
-	echo "<br><div style='overflow: scroll'><table id='theTable' class=\"widefat fixed\">";
-	echo "<thead><tr>";
-	foreach ( $results[0] as $key => $value ) {
-		echo "<th class=\"manage-column column-columnname\">";
-		echo "$key";
-		echo "</th>";
-	}
-	echo "</tr></thead>";
-	foreach ( $results as $fivesdraft ) {
-		echo "<tr class=\"alternate\">";
-		foreach ( $fivesdraft as $key => $value ) {
-			echo "<td class=\"column-columnname\">";
-			echo "$value";
-			echo "</td>";
+		echo "<br><div style='overflow: scroll'><table id='theTable' class=\"widefat fixed\">";
+		echo "<thead><tr>";
+		foreach ( $results[0] as $key => $value ) {
+			echo "<th class=\"manage-column column-columnname\">";
+			echo "$key";
+			echo "</th>";
 		}
-		echo "</tr>";
+		echo "</tr></thead>";
+		foreach ( $results as $fivesdraft ) {
+			echo "<tr class=\"alternate\">";
+			foreach ( $fivesdraft as $key => $value ) {
+				echo "<td class=\"column-columnname\">";
+				echo "$value";
+				echo "</td>";
+			}
+			echo "</tr>";
+		}
+		echo "</table></div>";
+	} else {
+		echo "<br><h1>Only admin is allowed here!</h1>";
 	}
-	echo "</table></div>";
 
 }
 
 function y_options_Empty() {
-	if ( isset( $_POST["l_emptyit"] ) ) {
-		global $wpdb;
-		$q = $wpdb->query( "TRUNCATE TABLE `lyc_form`" );
-		if ( $q ) {
-			echo "<br><h1>Table is empty now</h1>";
+	if ( is_super_admin() ) {
+
+		if ( isset( $_POST["l_emptyit"] ) ) {
+			global $wpdb;
+			$q = $wpdb->query( "TRUNCATE TABLE `lyc_form`" );
+			if ( $q ) {
+				echo "<br><h1>Table is empty now</h1>";
+			} else {
+				echo "<br><h1>" . $q . "</h1>";
+			}
 		} else {
-			echo "<br><h1>" . $q . "</h1>";
+			echo "<br> <br><form  method='post'>";
+			echo "<button class=\"button action\" type='submit' name='l_emptyit' value='l_emptyit'>Empty It</button>";
+			echo "</form>";
 		}
 	} else {
-		echo "<br> <br><form  method='post'>";
-		echo "<button class=\"button action\" type='submit' name='l_emptyit' value='l_emptyit'>Empty It</button>";
-		echo "</form>";
+		echo "<br><h1>Only admin is allowed here!</h1>";
 	}
-
 }
 
+function y_options_Pay() {
+	echo "<br><h1>Search</h1>";
+	echo "<br><form  method='post'>";
+	echo "<input type='text' name='l_query' placeholder='Query'/> <br>";
+	echo "<button class=\"button action\" type='submit'>Search</button>";
+	echo "</form><br>";
+	global $wpdb;
 
+	if ( isset( $_POST["l_query"] ) ) {
+		$query = addslashes( $_POST["l_query"] );
+		$row   = $wpdb->get_row( "SELECT * FROM `lyc_form` WHERE `code` LIKE '$query' OR `mobile` LIKE '$query'" );
+		if ( $row ) {
+			echo "<h1>Result</h1>";
+
+			if ( ! $row->isPaid ) {
+				echo "<p>Name : $row->name<p>";
+				echo "<p>Cert  : $row->cert<p>";
+				echo "<p>Code  : $row->code<p>";
+				echo "<p>mobile  : $row->mobile<p>";
+				echo "<p>Email  : $row->email<p>";
+				echo "<p>Is Paid  : " . ( ( $row->isPaid ) ? 'Yes' : 'No' ) . "<p>";
+				echo "<p>Paid To  : $row->paidTo<p>";
+
+				echo "<form  method='post'>";
+				echo "<input type='text' name='l_id' value='$row->id' hidden/>";
+				echo "<button class=\"button action\" type='submit' name='l_payit' value='l_payit'>Pay</button>";
+				echo "</form>";
+			} else {
+				echo "<p>Name : $row->name<p>";
+				echo "<p>mobile  : $row->mobile<p>";
+				echo "<p>Is Paid  : " . ( ( $row->isPaid ) ? 'Yes' : 'No' ) . "<p>";
+				echo "<p>Paid To  : $row->paidTo<p>";
+			}
+		} else {
+			echo "<br><h1>Not Found</h1>";
+		}
+	} elseif ( isset( $_POST["l_payit"] ) ) {
+		$update = $wpdb->update(
+			'lyc_form',
+			array(
+				'paidTo' => wp_get_current_user()->user_login,
+				'isPaid' => true
+			),
+			array( 'id' => $_POST["l_id"] )
+		);
+		if ( $update ) {
+			echo "<br><h1>Done</h1>";
+		} else {
+			echo "<br><h1>Error</h1>";
+		}
+	}
+}
 
