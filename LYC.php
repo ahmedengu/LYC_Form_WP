@@ -356,6 +356,7 @@ function l_add_admin_menu() {
 	add_menu_page( 'LYC:list', 'LYC', 'manage_options', 'lyc_list', 'l_options_List' );
 	add_submenu_page( 'lyc_list', 'LYC', 'Empty it', 'manage_options', 'lyc_empty', 'y_options_Empty' );
 	add_submenu_page( 'lyc_list', 'LYC', 'Pay', 'read', 'lyc_pay', 'y_options_Pay' );
+	add_submenu_page( 'lyc_list', 'LYC', 'Send Mail', 'manage_options', 'lyc_sendmail', 'y_options_Send_Mail' );
 
 }
 
@@ -385,9 +386,9 @@ function l_options_List() {
 			echo "</th>";
 		}
 		echo "</tr></thead>";
-		foreach ( $results as $fivesdraft ) {
+		foreach ( $results as $result ) {
 			echo "<tr class=\"alternate\">";
-			foreach ( $fivesdraft as $key => $value ) {
+			foreach ( $result as $key => $value ) {
 				echo "<td class=\"column-columnname\">";
 				echo "$value";
 				echo "</td>";
@@ -422,6 +423,46 @@ function y_options_Empty() {
 	}
 }
 
+function y_options_Send_Mail() {
+	if ( is_super_admin() ) {
+
+		if ( isset( $_POST["l_emailmessage"] ) && strlen( $_POST["l_emailmessage"] ) ) {
+			global $wpdb;
+			$results = $wpdb->get_results( "SELECT * FROM `lyc_form`" );
+			if ( $results ) {
+				foreach ( $results as $result ) {
+					echo "sending to $result->email ... ";
+					$atts = array(
+						'title' => $_POST["l_emailtitle"],
+						'from'  => $_POST["l_emailfrom"]
+					);
+					if ( sendMail( $atts, $_POST["l_emailmessage"], $result->code, $result->email, $result->name ) ) {
+						echo "sent <br>";
+					} else {
+						echo "failed <br>";
+					}
+					sleep( 3 );
+				}
+			} else {
+				echo "<br><h1>Table is empty!</h1>";
+			}
+		} else {
+			echo "<br><h1>Send mail to everyone</h1>";
+			echo "<p>Use html, for new line : &lt;br&gt;</p>";
+			echo "<p>code: [CODE] , name: [NAME]</p>";
+			echo "<form  method='post'>";
+			echo "From: <input type='text' name='l_emailfrom' placeholder='From' value='lyc@ieeeaast.org'/> <br>";
+			echo "Title: <input type='text' name='l_emailtitle' placeholder='Title'/> <br>";
+			echo "Message:<br><textarea rows='4' cols='50' name='l_emailmessage'></textarea> <br>";
+			echo "<button class=\"button action\" type='submit'>Send</button>";
+			echo "</form>";
+		}
+	} else {
+		echo "<br><h1>Only admin is allowed here!</h1>";
+	}
+}
+
+
 function y_options_Pay() {
 	echo "<br><h1>Search</h1>";
 	echo "<br><form  method='post'>";
@@ -439,12 +480,8 @@ function y_options_Pay() {
 
 			if ( ! $row->isPaid ) {
 				echo "<p>Name : $row->name<p>";
-				echo "<p>Cert  : $row->cert<p>";
 				echo "<p>Code  : $row->code<p>";
 				echo "<p>mobile  : $row->mobile<p>";
-				echo "<p>Email  : $row->email<p>";
-				echo "<p>Is Paid  : " . ( ( $row->isPaid ) ? 'Yes' : 'No' ) . "<p>";
-				echo "<p>Paid To  : $row->paidTo<p>";
 
 				echo "<form  method='post'>";
 				echo "<input type='text' name='l_id' value='$row->id' hidden/>";
@@ -452,9 +489,9 @@ function y_options_Pay() {
 				echo "</form>";
 			} else {
 				echo "<p>Name : $row->name<p>";
+				echo "<p>Code  : $row->code<p>";
 				echo "<p>mobile  : $row->mobile<p>";
 				echo "<p>Is Paid  : " . ( ( $row->isPaid ) ? 'Yes' : 'No' ) . "<p>";
-				echo "<p>Paid To  : $row->paidTo<p>";
 			}
 		} else {
 			echo "<br><h1>Not Found</h1>";
