@@ -430,9 +430,10 @@ function y_options_Pay() {
 	echo "</form><br>";
 	global $wpdb;
 
-	if ( isset( $_POST["l_query"] ) ) {
+	if ( isset( $_POST["l_query"] ) && strlen( $_POST["l_query"] ) ) {
 		$query = addslashes( $_POST["l_query"] );
-		$row   = $wpdb->get_row( "SELECT * FROM `lyc_form` WHERE `code` LIKE '$query' OR `mobile` LIKE '$query'" );
+		$row   = $wpdb->get_row( "SELECT * FROM `lyc_form` WHERE LOWER(code) LIKE LOWER('%$query%') OR  LOWER(email) LIKE LOWER('%$query%') OR LOWER(name) LIKE LOWER('%$query%') OR `mobile` LIKE '%$query%'" );
+
 		if ( $row ) {
 			echo "<h1>Result</h1>";
 
