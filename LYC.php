@@ -210,7 +210,7 @@ function checkRegex( $errors ) {
  * @return string
  */
 function checkBirthday( $errors ) {
-	if ( strlen( $errors ) == 0 && ! preg_match( "/^[0-9]{4}-([1-9]|1[0-2])-([1-9]|[1-2][0-9]|3[0-1])$/", $_POST['l_yyyy'] . '-' . $_POST['l_mm'] . '-' . $_POST['l_dd'] ) ) {
+	if ( strlen( $errors ) == 0 && ! preg_match( "/^[0-9]{4}-([1-9]|1[0-2]|0[1-9])-(0[1-9]|[1-9]|[1-2][0-9]|3[0-1])$/", $_POST['l_yyyy'] . '-' . $_POST['l_mm'] . '-' . $_POST['l_dd'] ) ) {
 		$errors = 'Birthday not valid <br>';
 	}
 
