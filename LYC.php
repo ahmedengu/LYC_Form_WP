@@ -494,6 +494,7 @@ function y_options_Pay() {
 				echo "<p>Name : $row->name<p>";
 				echo "<p>Code  : $row->code<p>";
 				echo "<p>mobile  : $row->mobile<p>";
+				echo "<p>member  : $row->member<p>";
 
 				echo "<form  method='post'>";
 				echo "<input type='text' name='l_id' value='$row->id' hidden/>";
@@ -503,6 +504,7 @@ function y_options_Pay() {
 				echo "<p>Name : $row->name<p>";
 				echo "<p>Code  : $row->code<p>";
 				echo "<p>mobile  : $row->mobile<p>";
+				echo "<p>member  : $row->member<p>";
 				echo "<p>Is Paid  : " . ( ( $row->isPaid ) ? 'Yes' : 'No' ) . "<p>";
 				echo "<p>PaidTo  : $row->paidTo<p>";
 			}
