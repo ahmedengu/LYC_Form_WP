@@ -432,11 +432,22 @@ function y_options_Send_Mail() {
 
 		if ( isset( $_POST["l_emailmessage"] ) && strlen( $_POST["l_emailmessage"] ) ) {
 			global $wpdb;
-			if ( isset( $_POST['l_onlypaid'] ) && $_POST['l_onlypaid'] == '1' ) {
-				$results = $wpdb->get_results( "SELECT * FROM `lyc_form` WHERE isPaid = 1" );
-			} else {
+			if ( $_POST['l_mail_option'] == '1' ) {
 				$results = $wpdb->get_results( "SELECT * FROM `lyc_form`" );
+			} elseif ( $_POST['l_mail_option'] == '2' ) {
+				$results = $wpdb->get_results( "SELECT * FROM `lyc_form` WHERE isPaid = 1" );
+			} elseif ( $_POST['l_mail_option'] == '3' ) {
+				$results = $wpdb->get_results( "SELECT * FROM `lyc_form` WHERE isPaid = 0 OR isPaid IS NULL" );
+			} elseif ( $_POST['l_mail_option'] == '4' ) {
+				$results = array(
+					(object) [
+						"email" => $_POST['l_emailto_test'],
+						"code"  => "C000",
+						"name"  => "test name"
+					]
+				);
 			}
+
 			if ( $results ) {
 				echo '<br><br>';
 				foreach ( $results as $result ) {
@@ -461,10 +472,16 @@ function y_options_Send_Mail() {
 			echo "<p>Use html, for new line : &lt;br&gt;</p>";
 			echo "<p>code: [CODE] , name: [NAME]</p>";
 			echo "<form  method='post'>";
-			echo "From: <input type='text' name='l_emailfrom' placeholder='From' value='lyc@ieeeaast.org'/> <br>";
+			echo "From: <input type='email' name='l_emailfrom' placeholder='From' value='lyc@ieeeaast.org'/> <br>";
 			echo "Title: <input type='text' name='l_emailtitle' placeholder='Title'/> <br>";
 			echo "Message:<br><textarea rows='4' cols='50' name='l_emailmessage'></textarea> <br>";
-			echo "<input type='checkbox' name='l_onlypaid' value='1'/> Send to paid only  <br>";
+			echo "Send To: <select name='l_mail_option'>";
+			echo "<option value='1' selected>all</option>";
+			echo "<option value='2'>Paid</option>";
+			echo "<option value='3'>Not Paid</option>";
+			echo "<option value='4'>Just me (for testing)</option>";
+			echo "</select><br>";
+			echo "Your Mail(For testing): <input type='email' name='l_emailto_test' placeholder='To'/> <br><br>";
 			echo "<button class=\"button action\" type='submit'>Send</button>";
 			echo "</form>";
 			echo '<br> Notice that gonna take a long time!';
