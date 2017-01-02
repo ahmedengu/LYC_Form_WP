@@ -375,7 +375,7 @@ function l_options_List() {
 			return;
 		}
 		echo '<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"><script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script><script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script><script type="text/javascript" src="http://ngiriraj.com/pages/htmltable_export/tableExport.js"></script>
-	<script type="text/javascript" src="http://ngiriraj.com/pages/htmltable_export/jquery.base64.js"></script>
+	<script type="text/javascript" src="http://yckart.github.io/jquery.base64.js/jquery.base64.js"></script>
 	<script type="text/javascript" src="http://ngiriraj.com/pages/htmltable_export/html2canvas.js"></script>
 	<script type="text/javascript" src="http://ngiriraj.com/pages/htmltable_export/jspdf/libs/sprintf.js"></script>
 	<script type="text/javascript" src="http://ngiriraj.com/pages/htmltable_export/jspdf/jspdf.js"></script>
